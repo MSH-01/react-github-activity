@@ -1,253 +1,226 @@
-# React Github Activity
+# React GitHub Activity
 
-A React component that displays GitHub contribution data in a heatmap format similar to GitHub's contribution graph.
+A customizable React component for displaying GitHub contribution graphs with detailed statistics and flexible styling options.
 
-## Features
+![GitHub](https://img.shields.io/github/license/yourusername/react-github-activity)
+![npm](https://img.shields.io/npm/v/react-github-activity)
+![npm downloads](https://img.shields.io/npm/dm/react-github-activity)
 
-- 🔥 GitHub contribution heatmap visualization
-- 📊 Optional statistics display (total contributions, daily average, streaks)
-- 🌓 Dark/light mode support
-- 🎨 Customizable with Tailwind CSS
-- 📱 Responsive design
-- 🔑 Works with or without GitHub API token
+## ✨ Features
 
-## Usage
+- 🎨 **Customizable Design** - Full control over styling with Tailwind CSS classes
+- 📊 **Detailed Statistics** - Display contribution counts, streaks, and averages
+- 🗓️ **Flexible Time Ranges** - Show specific years or rolling months
+- 🌙 **Dark Mode Support** - Built-in dark mode styling
+- ⚡ **TypeScript Support** - Full type safety and IntelliSense
+- 🔧 **Configurable Layout** - Adjust days per column and labels
+- 🚫 **No External Dependencies** - Only requires React and clsx
+
+## 📦 Installation
+
+```bash
+# npm
+npm install react-github-activity
+
+# yarn
+yarn add react-github-activity
+
+# pnpm
+pnpm add react-github-activity
+```
+
+## 🚀 Quick Start
+
+```tsx
+import React from 'react';
+import { GitHubContributions } from 'react-github-activity';
+
+function App() {
+  return (
+    <div className="p-8">
+      <GitHubContributions
+        username="octocat"
+        token="your-github-token" // Optional but recommended
+        showStats={true}
+        showLabels={true}
+      />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 🛠️ API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `username` | `string` | **Required** | GitHub username to fetch contributions for |
+| `token` | `string` | `undefined` | GitHub API token (recommended for higher rate limits) |
+| `showStats` | `boolean` | `false` | Whether to display contribution statistics |
+| `year` | `number` | Current year | Specific year to display (overrides `months`) |
+| `months` | `number` | `undefined` | Number of months to show from today |
+| `showLabels` | `boolean` | `true` | Whether to show month and day labels |
+| `daysPerColumn` | `number` | `7` | Number of days per column in the grid |
+| `className` | `string` | `undefined` | Additional CSS classes to apply |
+
+### Types
+
+```typescript
+interface GitHubContributionsProps {
+  username: string;
+  token?: string;
+  showStats?: boolean;
+  year?: number;
+  months?: number;
+  showLabels?: boolean;
+  daysPerColumn?: number;
+  className?: string;
+}
+```
+
+## 📋 Examples
 
 ### Basic Usage
 
 ```tsx
-import GitHubContributions from '@/components/generic/github-contributions';
+import { GitHubContributions } from 'react-github-activity';
 
-export default function Profile() {
-  return (
-    <div>
-      <GitHubContributions username="your-github-username" />
-    </div>
-  );
-}
+<GitHubContributions username="octocat" />
 ```
 
 ### With Statistics
 
 ```tsx
 <GitHubContributions 
-  username="your-github-username"
+  username="octocat"
   showStats={true}
+  token="ghp_your_token_here"
 />
 ```
 
-### With GitHub API Token (Recommended)
+### Last 6 Months
 
 ```tsx
 <GitHubContributions 
-  username="your-github-username"
-  token={process.env.GITHUB_API_TOKEN}
-  showStats={true}
-  year={2024}
-/>
-```
-
-### Show Last N Months
-
-```tsx
-<GitHubContributions 
-  username="your-github-username"
-  token={process.env.GITHUB_API_TOKEN}
+  username="octocat"
   months={6}
   showStats={true}
 />
 ```
 
-### Without Labels (Minimal View)
+### Specific Year
 
 ```tsx
 <GitHubContributions 
-  username="your-github-username"
-  token={process.env.GITHUB_API_TOKEN}
+  username="octocat"
+  year={2023}
   showLabels={false}
-  className="compact-view"
 />
 ```
 
-### Custom Column Layout
+### Custom Styling
 
 ```tsx
 <GitHubContributions 
-  username="your-github-username"
-  token={process.env.GITHUB_API_TOKEN}
-  daysPerColumn={3}
-  showLabels={false}
-  className="long-thin"
+  username="octocat"
+  className="border rounded-lg p-4 bg-white dark:bg-gray-900"
+  showStats={true}
 />
 ```
 
-## Props
+### Compact Layout
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `username` | `string` | **required** | GitHub username |
-| `token` | `string` | `undefined` | GitHub API token (recommended for higher rate limits) |
-| `showStats` | `boolean` | `false` | Show additional statistics above the contribution graph |
-| `year` | `number` | Current year | Year to display contributions for (ignored if `months` is set) |
-| `months` | `number` | `undefined` | Number of months to display from today backwards (overrides `year`) |
-| `showLabels` | `boolean` | `true` | Show month and day labels around the contribution grid |
-| `daysPerColumn` | `number` | `7` | Number of days to display in each column (customizes aspect ratio) |
-| `className` | `string` | `undefined` | Additional CSS classes |
+```tsx
+<GitHubContributions 
+  username="octocat"
+  daysPerColumn={14}
+  showLabels={false}
+/>
+```
 
-## GitHub API Setup
+## 🔑 GitHub Token Setup
 
-### ⚠️ API Token Strongly Recommended
+To avoid rate limiting (60 requests/hour without token vs 5,000 with token), create a GitHub personal access token:
 
-**Rate Limits:**
-- **Without token**: 60 requests/hour per IP address
-- **With token**: 5,000 requests/hour
+1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Select scopes: No additional scopes needed for public contribution data
+4. Copy the token and use it in your component
 
-**Reality Check:** You'll likely hit the 60/hour limit quickly during development or if multiple users visit your site. A token is practically required for any real-world usage.
-
-### Getting a GitHub API Token
-
-1. Go to GitHub Settings → Developer settings → Personal access tokens
-2. Generate a new token (classic)
-3. Select the following scopes:
-   - `public_repo` (for public repositories)
-   - `read:user` (for user profile data)
-4. Copy the generated token
-
-### Environment Setup
-
-Add your token to your `.env.local` file:
+**Environment Variable (Recommended):**
 
 ```bash
-GITHUB_API_TOKEN=your_github_token_here
+# .env.local
+GITHUB_TOKEN=ghp_your_token_here
 ```
-
-Then use it in your component:
 
 ```tsx
 <GitHubContributions 
-  username="your-username"
-  token={process.env.GITHUB_API_TOKEN}
+  username="octocat"
+  token={process.env.GITHUB_TOKEN}
 />
 ```
 
-## Date Range Options
+## 🎨 Styling
 
-### Full Year (Default)
-Shows contributions for an entire calendar year:
+The component uses Tailwind CSS classes by default. You can customize the appearance by:
+
+1. **Overriding with custom classes:**
 ```tsx
-<GitHubContributions username="your-username" year={2024} />
+<GitHubContributions 
+  username="octocat"
+  className="my-custom-styles"
+/>
 ```
 
-### Last N Months
-Shows contributions for the last N months from today:
+2. **Using CSS-in-JS or styled-components:**
 ```tsx
-<GitHubContributions username="your-username" months={6} />
+const StyledGitHubContributions = styled(GitHubContributions)`
+  /* Your custom styles */
+`;
 ```
 
-**Note**: When `months` is specified, it overrides the `year` prop and shows a rolling window from today backwards.
+3. **Customizing contribution level colors:**
+The component uses these Tailwind classes for different contribution levels:
+- `bg-black/5 dark:bg-white/10` (no contributions)
+- `bg-green-300 dark:bg-green-900` (low)
+- `bg-green-400 dark:bg-green-700` (medium-low)
+- `bg-green-600 dark:bg-green-500` (medium-high)
+- `bg-green-700 dark:bg-green-300` (high)
 
-**Common use cases:**
-- `months={3}` - Last 3 months (quarterly view)
-- `months={6}` - Last 6 months (half-year view)  
-- `months={12}` - Last 12 months (rolling annual view)
+## 🔧 Requirements
 
-## Label Display Options
+- React 16.8.0 or higher
+- A CSS framework that supports the classes used (Tailwind CSS recommended)
 
-### Show Labels (Default)
-Displays month names above and day abbreviations to the left of the contribution grid:
-```tsx
-<GitHubContributions username="your-username" showLabels={true} />
-```
+## ⚠️ Error Handling
 
-### Hide Labels (Minimal View)
-Shows only the contribution squares for a cleaner, more compact display:
-```tsx
-<GitHubContributions username="your-username" showLabels={false} />
-```
+The component includes built-in error handling for common scenarios:
 
-**Use cases for hiding labels:**
-- **Embedded in tight spaces**: When space is limited
-- **Minimal design preference**: For cleaner aesthetic
-- **Multiple instances**: When showing several contribution graphs
-- **Dashboard views**: Where context is provided elsewhere
+- **Rate limiting:** Shows helpful messages about token usage
+- **Invalid usernames:** Displays appropriate error messages
+- **Network issues:** Graceful fallback with error display
+- **Loading states:** Spinner animation during data fetching
 
-## Custom Column Layout
+## 🤝 Contributing
 
-### Days Per Column
-Control the visual aspect ratio by changing how many days are displayed in each column:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```tsx
-// Default GitHub-style (7 days per column)
-<GitHubContributions username="your-username" daysPerColumn={7} />
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-// Long and thin (3 days per column - more columns, shorter height)
-<GitHubContributions username="your-username" daysPerColumn={3} />
+## 📄 License
 
-// Tall and narrow (14 days per column - fewer columns, taller height)
-<GitHubContributions username="your-username" daysPerColumn={14} />
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-**Visual Effects:**
-- **Lower values** (1-6): Creates a longer, thinner visualization with more columns
-- **Higher values** (8-21): Creates a taller, narrower visualization with fewer columns
-- **Value of 7**: Standard GitHub appearance
+## 🙏 Acknowledgments
 
-**Common Use Cases:**
-- `daysPerColumn={3}` - Perfect for wide, horizontal layouts
-- `daysPerColumn={7}` - Classic GitHub look (default)
-- `daysPerColumn={14}` - Compact vertical display for sidebars
-
-## Statistics Displayed
-
-When `showStats={true}`, the component displays:
-
-- **Total Contributions**: Total contributions for the selected time period
-- **Daily Average**: Average contributions per day
-- **Longest Streak**: Maximum consecutive days with contributions
-- **Current Streak**: Current consecutive days with contributions (from today backwards)
-
-## Styling
-
-The component uses Tailwind CSS and follows your project's design system:
-
-- Uses `font-commit-mono` for labels and stats
-- Supports dark mode with `dark:` prefixes
-- Uses green color scheme matching GitHub's design
-- Responsive grid layout for statistics
-
-## Error Handling
-
-The component handles various error states:
-
-- **Loading spinner** while fetching data
-- **Detailed error messages** for API failures
-- **Rate limit guidance** with actionable solutions
-- **Graceful fallback** for missing data
-
-### Common Errors
-
-**Rate Limit Exceeded (403)**
-```
-GitHub API rate limit exceeded. Please add a GitHub API token to increase your rate limit from 60 to 5,000 requests per hour.
-```
-
-**Solutions:**
-1. Add a GitHub API token (recommended)
-2. Wait 1 hour for rate limit reset
-3. Check if other applications are using GitHub API from your IP
-
-**Authentication Issues**
-- Verify token format (should start with `ghp_` or `github_pat_`)
-- Check token scopes (`public_repo`, `read:user`)
-- Ensure token is properly set in environment variables
-
-## Rate Limits
-
-- **Without token**: 60 requests/hour per IP address
-- **With token**: 5,000 requests/hour per token
-
-**Important:** Rate limits are shared across your entire IP address, so development and production usage both count against the same limit.
-
-## Example Implementation
-
-See `app/(content)/about/page.tsx` for a complete implementation example. 
+- Inspired by GitHub's contribution graph
+- Built with TypeScript and modern React patterns
+- Styled with Tailwind CSS for maximum customization 
