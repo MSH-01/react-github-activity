@@ -69,6 +69,18 @@ export default function Profile() {
 />
 ```
 
+### Custom Column Layout
+
+```tsx
+<GitHubContributions 
+  username="your-github-username"
+  token={process.env.GITHUB_API_TOKEN}
+  daysPerColumn={3}
+  showLabels={false}
+  className="long-thin"
+/>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -79,13 +91,18 @@ export default function Profile() {
 | `year` | `number` | Current year | Year to display contributions for (ignored if `months` is set) |
 | `months` | `number` | `undefined` | Number of months to display from today backwards (overrides `year`) |
 | `showLabels` | `boolean` | `true` | Show month and day labels around the contribution grid |
+| `daysPerColumn` | `number` | `7` | Number of days to display in each column (customizes aspect ratio) |
 | `className` | `string` | `undefined` | Additional CSS classes |
 
 ## GitHub API Setup
 
-### Why Use an API Token?
+### ⚠️ API Token Strongly Recommended
 
-Without a token, you're limited to 60 requests per hour. With a token, you get 5,000 requests per hour.
+**Rate Limits:**
+- **Without token**: 60 requests/hour per IP address
+- **With token**: 5,000 requests/hour
+
+**Reality Check:** You'll likely hit the 60/hour limit quickly during development or if multiple users visit your site. A token is practically required for any real-world usage.
 
 ### Getting a GitHub API Token
 
@@ -154,6 +171,32 @@ Shows only the contribution squares for a cleaner, more compact display:
 - **Multiple instances**: When showing several contribution graphs
 - **Dashboard views**: Where context is provided elsewhere
 
+## Custom Column Layout
+
+### Days Per Column
+Control the visual aspect ratio by changing how many days are displayed in each column:
+
+```tsx
+// Default GitHub-style (7 days per column)
+<GitHubContributions username="your-username" daysPerColumn={7} />
+
+// Long and thin (3 days per column - more columns, shorter height)
+<GitHubContributions username="your-username" daysPerColumn={3} />
+
+// Tall and narrow (14 days per column - fewer columns, taller height)
+<GitHubContributions username="your-username" daysPerColumn={14} />
+```
+
+**Visual Effects:**
+- **Lower values** (1-6): Creates a longer, thinner visualization with more columns
+- **Higher values** (8-21): Creates a taller, narrower visualization with fewer columns
+- **Value of 7**: Standard GitHub appearance
+
+**Common Use Cases:**
+- `daysPerColumn={3}` - Perfect for wide, horizontal layouts
+- `daysPerColumn={7}` - Classic GitHub look (default)
+- `daysPerColumn={14}` - Compact vertical display for sidebars
+
 ## Statistics Displayed
 
 When `showStats={true}`, the component displays:
@@ -176,17 +219,34 @@ The component uses Tailwind CSS and follows your project's design system:
 
 The component handles various error states:
 
-- Loading spinner while fetching data
-- Error messages for API failures
-- Graceful fallback for missing data
-- Rate limit handling
+- **Loading spinner** while fetching data
+- **Detailed error messages** for API failures
+- **Rate limit guidance** with actionable solutions
+- **Graceful fallback** for missing data
+
+### Common Errors
+
+**Rate Limit Exceeded (403)**
+```
+GitHub API rate limit exceeded. Please add a GitHub API token to increase your rate limit from 60 to 5,000 requests per hour.
+```
+
+**Solutions:**
+1. Add a GitHub API token (recommended)
+2. Wait 1 hour for rate limit reset
+3. Check if other applications are using GitHub API from your IP
+
+**Authentication Issues**
+- Verify token format (should start with `ghp_` or `github_pat_`)
+- Check token scopes (`public_repo`, `read:user`)
+- Ensure token is properly set in environment variables
 
 ## Rate Limits
 
-- **Without token**: 60 requests/hour
-- **With token**: 5,000 requests/hour
+- **Without token**: 60 requests/hour per IP address
+- **With token**: 5,000 requests/hour per token
 
-The component caches data in component state to minimize API calls during the session.
+**Important:** Rate limits are shared across your entire IP address, so development and production usage both count against the same limit.
 
 ## Example Implementation
 
