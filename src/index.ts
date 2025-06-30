@@ -1,3 +1,16 @@
 export { default as GitHubContributions } from './GitHubContributions';
-export type { GitHubContributionsProps } from './GitHubContributions';
-export { cn } from './utils'; 
+export type {
+  GitHubContributionsProps,
+  ContributionDay,
+  ContributionWeek,
+  ContributionsData,
+  ContributionStats,
+} from './GitHubContributions';
+export {
+  cn,
+  formatDate,
+  getDateMonthsAgo,
+  getYearBounds,
+  isValidGitHubUsername,
+  isValidGitHubToken,
+} from './utils'; 

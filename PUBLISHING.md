@@ -1,353 +1,218 @@
-# Publishing & Usage Guide
+# Publishing Guide
 
-## 📦 Publishing to NPM
+This document outlines the publishing process for `react-github-activity`.
 
-### 1. Update package.json
+## Pre-Publishing Checklist
 
-Before publishing, make sure to update your `package.json`:
+### 1. Version Update
+- [ ] Update version in `package.json`
+- [ ] Update any version references in documentation
+- [ ] Create a new release branch if needed
 
-```json
-{
-  "author": "Your Name <your.email@example.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/react-github-activity.git"
-  },
-  "homepage": "https://github.com/yourusername/react-github-activity#readme",
-  "bugs": {
-    "url": "https://github.com/yourusername/react-github-activity/issues"
-  }
-}
-```
+### 2. Code Quality
+- [ ] Run type checking: `npm run type-check`
+- [ ] Run linting: `npm run lint`
+- [ ] Test build process: `npm run build`
+- [ ] Verify exports in `dist/` directory
 
-### 2. Login to NPM
+### 3. Documentation
+- [ ] Update README.md with any new features
+- [ ] Verify all code examples work
+- [ ] Check TypeScript examples are accurate
+- [ ] Update CHANGELOG.md (if exists)
 
+### 4. Testing
+- [ ] Test in Next.js App Router
+- [ ] Test in Next.js Pages Router
+- [ ] Test in Create React App
+- [ ] Test in Vite
+- [ ] Verify TypeScript exports work correctly
+
+## Publishing Process
+
+### 1. Prepare Release
 ```bash
-npm login
-```
+# Ensure clean working directory
+git status
 
-### 3. Test the package locally
+# Install dependencies
+npm ci
 
-```bash
-# Build the package
+# Run quality checks
+npm run type-check
 npm run build
 
-# Test pack (creates a tarball without publishing)
-npm pack
+# Test package contents
+npm pack --dry-run
 ```
 
-### 4. Publish
-
+### 2. Version and Tag
 ```bash
-# Publish to NPM
-npm publish
-
-# For beta releases
-npm publish --tag beta
-```
-
-### 5. Version management
-
-```bash
-# Patch version (1.0.0 -> 1.0.1)
+# Update version (patch/minor/major)
 npm version patch
 
-# Minor version (1.0.0 -> 1.1.0)
-npm version minor
-
-# Major version (1.0.0 -> 2.0.0)
-npm version major
+# Or manually update package.json and commit
+git add package.json
+git commit -m "chore: bump version to x.x.x"
+git tag vx.x.x
 ```
 
-## 🚀 Using in React Projects
-
-### Next.js Project
-
-1. **Install the package:**
+### 3. Publish to NPM
 ```bash
-npm install react-github-activity
+# Build for production
+npm run build
+
+# Publish (this will run prepublishOnly automatically)
+npm publish
+
+# Push tags to GitHub
+git push origin main --tags
 ```
 
-2. **Set up Tailwind CSS** (if not already configured):
-```bash
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+### 4. Post-Publishing
+- [ ] Verify package on [npmjs.com](https://npmjs.com/package/react-github-activity)
+- [ ] Test installation: `npm install react-github-activity@latest`
+- [ ] Update GitHub release notes
+- [ ] Announce release (if major version)
+
+## Versioning Strategy
+
+We follow [Semantic Versioning](https://semver.org/):
+
+- **MAJOR** (x.0.0): Breaking changes to API
+- **MINOR** (0.x.0): New features, backward compatible
+- **PATCH** (0.0.x): Bug fixes, backward compatible
+
+### Breaking Changes
+- Changing required props
+- Removing props or exports
+- Changing TypeScript types in incompatible ways
+- Changing default behavior significantly
+
+### New Features
+- Adding new optional props
+- Adding new exports
+- Adding new utility functions
+- Improving existing functionality without breaking changes
+
+### Bug Fixes
+- Fixing incorrect behavior
+- Updating dependencies
+- Performance improvements
+- Documentation fixes
+
+## Release Checklist Template
+
+```markdown
+## Release vX.X.X
+
+### Changes
+- [ ] Feature/fix 1
+- [ ] Feature/fix 2
+
+### Pre-Release
+- [ ] Version updated in package.json
+- [ ] Build successful
+- [ ] Types check passed
+- [ ] Documentation updated
+- [ ] Examples tested
+
+### Release
+- [ ] Published to NPM
+- [ ] GitHub release created
+- [ ] Tags pushed
+
+### Post-Release
+- [ ] Package verified on NPM
+- [ ] Installation tested
+- [ ] Community notified (if applicable)
 ```
 
-3. **Configure tailwind.config.js:**
-```js
-module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/react-github-activity/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-```
+## Emergency Fixes
 
-4. **Use the component:**
-```tsx
-// app/page.tsx or pages/index.tsx
-import { GitHubContributions } from 'react-github-activity';
+For critical bugs in production:
 
-export default function Home() {
-  return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">My GitHub Activity</h1>
-      <GitHubContributions
-        username="octocat"
-        token={process.env.GITHUB_TOKEN}
-        showStats={true}
-        className="border rounded-lg p-4"
-      />
-    </div>
-  );
-}
-```
+1. Create hotfix branch from main
+2. Fix the issue
+3. Test thoroughly
+4. Fast-track through testing
+5. Publish as patch version
+6. Merge back to main
 
-### Create React App
+## NPM Scripts Reference
 
-1. **Install the package:**
-```bash
-npm install react-github-activity
-```
+- `npm run build` - Build the package
+- `npm run dev` - Watch mode for development
+- `npm run type-check` - TypeScript type checking
+- `npm run lint` - Code quality checks
+- `npm pack` - Test package contents locally
 
-2. **Install and configure Tailwind:**
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-```
+## Development Setup
 
-3. **Update src/index.css:**
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
+For contributors and local development:
 
-4. **Use the component:**
-```tsx
-// src/App.tsx
-import React from 'react';
-import { GitHubContributions } from 'react-github-activity';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <GitHubContributions
-          username="octocat"
-          showStats={true}
-          className="bg-white dark:bg-gray-900 rounded-lg p-4"
-        />
-      </header>
-    </div>
-  );
-}
-
-export default App;
-```
-
-### Vite React Project
-
-1. **Install the package:**
-```bash
-npm install react-github-activity
-```
-
-2. **Install Tailwind:**
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-```
-
-3. **Use the component:**
-```tsx
-// src/App.tsx
-import { GitHubContributions } from 'react-github-activity';
-
-function App() {
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <GitHubContributions
-          username="octocat"
-          showStats={true}
-          months={6}
-        />
-      </div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-## 🔧 Development Setup
-
-### For contributors or local development:
-
-1. **Clone the repository:**
+### 1. Clone and Setup
 ```bash
 git clone https://github.com/yourusername/react-github-activity.git
 cd react-github-activity
-```
-
-2. **Install dependencies:**
-```bash
 npm install
 ```
 
-3. **Start development mode:**
+### 2. Development Commands
 ```bash
-npm run dev
+npm run dev        # Watch mode for development
+npm run build      # Build the package
+npm run type-check # TypeScript type checking
+npm run lint       # Code quality checks
 ```
 
-4. **Build the package:**
+### 3. Testing Locally
 ```bash
+# Build and test package contents
 npm run build
-```
+npm pack --dry-run
 
-5. **Test locally in another project:**
-```bash
-# In the package directory
+# Test in another project
 npm pack
-
-# In your test project
-npm install /path/to/react-github-activity-1.0.0.tgz
+# Then in your test project:
+npm install /path/to/react-github-activity-x.x.x.tgz
 ```
 
-## 🌟 Advanced Usage Examples
+### 4. Contribution Workflow
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes and test thoroughly
+4. Run type checks and build: `npm run type-check && npm run build`
+5. Commit and push: `git commit -m "feat: your feature" && git push`
+6. Create a Pull Request
 
-### With custom styling and animations
+## Package Structure
 
-```tsx
-import { GitHubContributions } from 'react-github-activity';
-
-function AnimatedContributions() {
-  return (
-    <div className="space-y-6">
-      <GitHubContributions
-        username="octocat"
-        showStats={true}
-        className="
-          transform transition-all duration-500 hover:scale-105
-          bg-gradient-to-br from-white to-gray-50
-          dark:from-gray-900 dark:to-gray-800
-          border border-gray-200 dark:border-gray-700
-          rounded-xl shadow-lg hover:shadow-xl
-          p-6
-        "
-      />
-    </div>
-  );
-}
+```
+react-github-activity/
+├── src/
+│   ├── GitHubContributions.tsx  # Main component
+│   ├── utils.ts                 # Utility functions
+│   └── index.ts                 # Package exports
+├── dist/                        # Built files (generated)
+├── package.json                 # Package configuration
+├── tsconfig.json               # TypeScript config
+├── README.md                   # Documentation
+└── PUBLISHING.md              # This file
 ```
 
-### Multiple time ranges in a dashboard
+## Build Output
 
-```tsx
-import { GitHubContributions } from 'react-github-activity';
+The build process generates:
+- `dist/index.js` - CommonJS build
+- `dist/index.esm.js` - ES modules build
+- `dist/index.d.ts` - TypeScript definitions
 
-function GitHubDashboard({ username }: { username: string }) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Last 3 Months</h3>
-        <GitHubContributions
-          username={username}
-          months={3}
-          showStats={true}
-          className="border rounded-lg p-4"
-        />
-      </div>
-      
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Current Year</h3>
-        <GitHubContributions
-          username={username}
-          showStats={false}
-          showLabels={false}
-          className="border rounded-lg p-4"
-        />
-      </div>
-    </div>
-  );
-}
-```
+## Quality Assurance
 
-### With error boundary
-
-```tsx
-import React from 'react';
-import { GitHubContributions } from 'react-github-activity';
-
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="p-4 border border-red-200 rounded-lg">
-          <h2 className="text-red-600 font-semibold">Something went wrong.</h2>
-          <p className="text-sm text-gray-600">Unable to load GitHub contributions.</p>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-function SafeGitHubContributions({ username }: { username: string }) {
-  return (
-    <ErrorBoundary>
-      <GitHubContributions
-        username={username}
-        showStats={true}
-        token={process.env.REACT_APP_GITHUB_TOKEN}
-      />
-    </ErrorBoundary>
-  );
-}
-```
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-1. **Tailwind classes not working:**
-   - Ensure the package path is included in your `tailwind.config.js` content array
-   - Make sure Tailwind CSS is properly installed and configured
-
-2. **TypeScript errors:**
-   - Install `@types/react` if not already installed
-   - Ensure your TypeScript version is compatible (4.0+)
-
-3. **Rate limiting:**
-   - Always use a GitHub token for production
-   - Consider caching the API response on your server
-
-4. **Styling issues:**
-   - The component requires Tailwind CSS classes to display properly
-   - You can override styles with your own CSS classes
-
-## 📝 Notes
-
-- The package is tree-shakable and optimized for modern bundlers
-- TypeScript definitions are included
-- The component is SSR-friendly (works with Next.js server-side rendering)
-- No peer dependencies beyond React 
+Before publishing, ensure:
+- [ ] All TypeScript types are exported correctly
+- [ ] Component works in both light and dark modes
+- [ ] Error handling works as expected
+- [ ] Documentation is up to date
+- [ ] Examples in README work correctly 

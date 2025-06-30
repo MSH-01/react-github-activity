@@ -1,17 +1,20 @@
 {
   "name": "react-github-activity",
-  "version": "1.0.0",
-  "description": "A React component for displaying GitHub contribution graphs with customizable styling and stats",
+  "version": "2.0.0",
+  "description": "A beautifully designed, highly customizable React component for displaying GitHub contribution graphs with TypeScript support",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "tsc --noEmit && echo 'Type checking passed'",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -22,7 +25,13 @@
     "graph",
     "calendar",
     "component",
-    "typescript"
+    "typescript",
+    "shadcn",
+    "tailwind",
+    "nextjs",
+    "contributions-graph",
+    "github-activity",
+    "ui-component"
   ],
   "author": "Your Name <your.email@example.com>",
   "license": "MIT",
@@ -34,16 +43,23 @@
   "bugs": {
     "url": "https://github.com/yourusername/react-github-activity/issues"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "clsx": "^2.0.0"
-  }
+  },
+  "sideEffects": false
 } 

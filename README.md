@@ -1,77 +1,105 @@
 # React GitHub Activity
 
-A customizable React component for displaying GitHub contribution graphs with detailed statistics and flexible styling options.
+A beautifully designed, highly customizable React component for displaying GitHub contribution graphs with TypeScript support.
 
-![GitHub](https://img.shields.io/github/license/yourusername/react-github-activity)
-![npm](https://img.shields.io/npm/v/react-github-activity)
-![npm downloads](https://img.shields.io/npm/dm/react-github-activity)
+[![NPM Version](https://img.shields.io/npm/v/react-github-activity)](https://www.npmjs.com/package/react-github-activity)
+[![License](https://img.shields.io/github/license/yourusername/react-github-activity)](https://github.com/yourusername/react-github-activity/blob/main/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)](https://www.typescriptlang.org/)
 
 ## ✨ Features
 
-- 🎨 **Customizable Design** - Full control over styling with Tailwind CSS classes
-- 📊 **Detailed Statistics** - Display contribution counts, streaks, and averages
+- 🎨 **Modern Design** - Clean, GitHub-like contribution graph with customizable styling
+- 📊 **Rich Statistics** - Display contribution counts, streaks, and daily averages
+- ⚡ **TypeScript Ready** - Full type safety with comprehensive type exports
 - 🗓️ **Flexible Time Ranges** - Show specific years or rolling months
-- 🌙 **Dark Mode Support** - Built-in dark mode styling
-- ⚡ **TypeScript Support** - Full type safety and IntelliSense
-- 🔧 **Configurable Layout** - Adjust days per column and labels
-- 🚫 **No External Dependencies** - Only requires React and clsx
+- 🌙 **Dark Mode** - Built-in support for light and dark themes
+- 🔧 **Highly Customizable** - Control layout, styling, and data display
+- 📱 **Responsive** - Works perfectly on mobile and desktop
+- 🚀 **Next.js Compatible** - Includes "use client" directive for App Router
+- 🎯 **Zero Dependencies** - Only requires React and clsx
 
 ## 📦 Installation
 
 ```bash
-# npm
-npm install react-github-activity
+npm install react-github-activity clsx
+```
 
-# yarn
-yarn add react-github-activity
+```bash
+yarn add react-github-activity clsx
+```
 
-# pnpm
-pnpm add react-github-activity
+```bash
+pnpm add react-github-activity clsx
 ```
 
 ## 🚀 Quick Start
 
 ```tsx
-import React from 'react';
-import { GitHubContributions } from 'react-github-activity';
+import { GitHubContributions } from "react-github-activity";
 
-function App() {
+export default function App() {
   return (
     <div className="p-8">
       <GitHubContributions
         username="octocat"
-        token="your-github-token" // Optional but recommended
-        showStats={true}
-        showLabels={true}
+        token="ghp_your_token_here"
+        showStats
+        showLabels
       />
     </div>
   );
 }
+```
 
-export default App;
+## 🔑 GitHub Token Setup
+
+**⚠️ Important:** A GitHub API token is required to avoid rate limiting and ensure reliable data fetching.
+
+### Creating a Token
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. **No scopes needed** for public contribution data
+4. Copy the generated token
+
+### Environment Variables (Recommended)
+
+```bash
+# .env.local (Next.js)
+GITHUB_TOKEN=ghp_your_token_here
+
+# .env (React/Vite)
+VITE_GITHUB_TOKEN=ghp_your_token_here
+```
+
+```tsx
+<GitHubContributions
+  username="octocat"
+  token={process.env.GITHUB_TOKEN || process.env.VITE_GITHUB_TOKEN!}
+/>
 ```
 
 ## 🛠️ API Reference
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `username` | `string` | **Required** | GitHub username to fetch contributions for |
-| `token` | `string` | `undefined` | GitHub API token (recommended for higher rate limits) |
-| `showStats` | `boolean` | `false` | Whether to display contribution statistics |
-| `year` | `number` | Current year | Specific year to display (overrides `months`) |
-| `months` | `number` | `undefined` | Number of months to show from today |
-| `showLabels` | `boolean` | `true` | Whether to show month and day labels |
-| `daysPerColumn` | `number` | `7` | Number of days per column in the grid |
-| `className` | `string` | `undefined` | Additional CSS classes to apply |
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `username` | `string` | ✅ | - | GitHub username to fetch contributions for |
+| `token` | `string` | ✅ | - | GitHub API token (required for rate limiting) |
+| `showStats` | `boolean` | ❌ | `false` | Display contribution statistics below the graph |
+| `year` | `number` | ❌ | Current year | Specific year to display (overrides `months`) |
+| `months` | `number` | ❌ | `undefined` | Number of months to show from today |
+| `showLabels` | `boolean` | ❌ | `true` | Show month labels and contribution legend |
+| `daysPerColumn` | `number` | ❌ | `7` | Number of days per column in the grid |
+| `className` | `string` | ❌ | `undefined` | Additional CSS classes for styling |
 
-### Types
+### TypeScript Types
 
 ```typescript
 interface GitHubContributionsProps {
   username: string;
-  token?: string;
+  token: string;
   showStats?: boolean;
   year?: number;
   months?: number;
@@ -79,140 +107,198 @@ interface GitHubContributionsProps {
   daysPerColumn?: number;
   className?: string;
 }
+
+interface ContributionDay {
+  date: string;
+  contributionCount: number;
+  contributionLevel: "NONE" | "FIRST_QUARTILE" | "SECOND_QUARTILE" | "THIRD_QUARTILE" | "FOURTH_QUARTILE";
+}
+
+interface ContributionStats {
+  totalContributions: number;
+  avgContributionsPerDay: string;
+  totalActiveDays: number;
+  longestStreak: number;
+  currentStreak: number;
+}
 ```
 
-## 📋 Examples
+## 📋 Usage Examples
 
 ### Basic Usage
 
 ```tsx
-import { GitHubContributions } from 'react-github-activity';
+import { GitHubContributions } from "react-github-activity";
 
-<GitHubContributions username="octocat" />
+export default function Profile() {
+  return (
+    <GitHubContributions
+      username="octocat"
+      token="ghp_your_token_here"
+    />
+  );
+}
 ```
 
 ### With Statistics
 
 ```tsx
-<GitHubContributions 
+<GitHubContributions
   username="octocat"
-  showStats={true}
   token="ghp_your_token_here"
+  showStats
+  className="border rounded-lg p-6"
 />
 ```
 
 ### Last 6 Months
 
 ```tsx
-<GitHubContributions 
+<GitHubContributions
   username="octocat"
+  token="ghp_your_token_here"
   months={6}
-  showStats={true}
+  showStats
 />
 ```
 
 ### Specific Year
 
 ```tsx
-<GitHubContributions 
+<GitHubContributions
   username="octocat"
+  token="ghp_your_token_here"
   year={2023}
   showLabels={false}
-/>
-```
-
-### Custom Styling
-
-```tsx
-<GitHubContributions 
-  username="octocat"
-  className="border rounded-lg p-4 bg-white dark:bg-gray-900"
-  showStats={true}
 />
 ```
 
 ### Compact Layout
 
 ```tsx
-<GitHubContributions 
+<GitHubContributions
   username="octocat"
+  token="ghp_your_token_here"
   daysPerColumn={14}
   showLabels={false}
+  className="max-w-md"
 />
 ```
 
-## 🔑 GitHub Token Setup
+### Next.js App Router
 
-To avoid rate limiting (60 requests/hour without token vs 5,000 with token), create a GitHub personal access token:
-
-1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
-2. Click "Generate new token (classic)"
-3. Select scopes: No additional scopes needed for public contribution data
-4. Copy the token and use it in your component
-
-**Environment Variable (Recommended):**
-
-```bash
-# .env.local
-GITHUB_TOKEN=ghp_your_token_here
-```
+The component includes `"use client"` directive for Next.js App Router compatibility:
 
 ```tsx
-<GitHubContributions 
+// app/components/profile.tsx
+import { GitHubContributions } from "react-github-activity";
+
+export default function Profile() {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold">My GitHub Activity</h2>
+      <GitHubContributions
+        username="your-username"
+        token={process.env.GITHUB_TOKEN!}
+        showStats
+        className="border rounded-lg p-6 bg-white dark:bg-gray-900"
+      />
+    </div>
+  );
+}
+```
+
+## 🎨 Styling & Customization
+
+### Custom Styling
+
+```tsx
+<GitHubContributions
   username="octocat"
-  token={process.env.GITHUB_TOKEN}
+  token="ghp_your_token_here"
+  className="border rounded-xl p-8 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800"
+  showStats
 />
 ```
 
-## 🎨 Styling
+### Contribution Level Colors
 
-The component uses Tailwind CSS classes by default. You can customize the appearance by:
+The component uses these Tailwind classes for contribution levels:
 
-1. **Overriding with custom classes:**
+- **None**: `bg-black/5 dark:bg-white/10`
+- **Low**: `bg-green-300 dark:bg-green-900`
+- **Medium-Low**: `bg-green-400 dark:bg-green-700`
+- **Medium-High**: `bg-green-600 dark:bg-green-500`
+- **High**: `bg-green-700 dark:bg-green-300`
+
+## 🚨 Error Handling
+
+The component includes robust error handling:
+
+- **Graceful Degradation**: Shows empty contribution grid on API errors
+- **Console Logging**: Detailed error information for debugging
+- **Rate Limiting**: Helpful error messages for token issues
+- **Invalid Data**: Handles malformed API responses
+
 ```tsx
-<GitHubContributions 
-  username="octocat"
-  className="my-custom-styles"
+// The component will render an empty grid and log errors to console
+<GitHubContributions
+  username="invalid-user"
+  token="invalid-token"
+  showStats
 />
 ```
 
-2. **Using CSS-in-JS or styled-components:**
-```tsx
-const StyledGitHubContributions = styled(GitHubContributions)`
-  /* Your custom styles */
-`;
-```
+## 🔧 Utility Functions
 
-3. **Customizing contribution level colors:**
-The component uses these Tailwind classes for different contribution levels:
-- `bg-black/5 dark:bg-white/10` (no contributions)
-- `bg-green-300 dark:bg-green-900` (low)
-- `bg-green-400 dark:bg-green-700` (medium-low)
-- `bg-green-600 dark:bg-green-500` (medium-high)
-- `bg-green-700 dark:bg-green-300` (high)
+Import additional utilities for custom implementations:
+
+```tsx
+import {
+  formatDate,
+  getDateMonthsAgo,
+  getYearBounds,
+  isValidGitHubUsername,
+  isValidGitHubToken,
+  cn
+} from "react-github-activity";
+
+// Validate inputs
+const isValid = isValidGitHubUsername("octocat"); // true
+const tokenValid = isValidGitHubToken("ghp_xxxx"); // true
+
+// Date utilities
+const sixMonthsAgo = getDateMonthsAgo(6);
+const { start, end } = getYearBounds(2023);
+
+// Formatting
+const formatted = formatDate(new Date()); // "Jan 15, 2024"
+
+// Class name utility (same as clsx)
+const classes = cn("base-class", condition && "conditional-class");
+```
 
 ## 🔧 Requirements
 
-- React 16.8.0 or higher
-- A CSS framework that supports the classes used (Tailwind CSS recommended)
+- **React**: 16.8.0 or higher
+- **CSS Framework**: Tailwind CSS (recommended) or custom CSS
+- **GitHub Token**: Required for API access
 
-## ⚠️ Error Handling
+## ⚠️ Rate Limits
 
-The component includes built-in error handling for common scenarios:
-
-- **Rate limiting:** Shows helpful messages about token usage
-- **Invalid usernames:** Displays appropriate error messages
-- **Network issues:** Graceful fallback with error display
-- **Loading states:** Spinner animation during data fetching
+| Token Type | Rate Limit | Recommended Use |
+|------------|------------|-----------------|
+| No Token | 60/hour | ❌ Not recommended |
+| Personal Token | 5,000/hour | ✅ Production ready |
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md).
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
 ## 📄 License
@@ -221,6 +307,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Inspired by GitHub's contribution graph
-- Built with TypeScript and modern React patterns
-- Styled with Tailwind CSS for maximum customization 
+- Inspired by GitHub's contribution graph design
+- Built with modern React patterns and TypeScript
+- Styled with Tailwind CSS for maximum flexibility
+- Follows shadcn/ui design principles 
